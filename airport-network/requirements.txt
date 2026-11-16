@@ -1,0 +1,8 @@
+# The saved model bundle embeds sklearn's pickle compatibility tag: 1.6.1.
+# Use this exact version when loading the existing bundle. Do not retrain to resolve
+# serialization compatibility. The source Colab run recorded Python 3.13 and pandas
+# 2.2.3; its NumPy and joblib versions were not saved, so they are not guessed here.
+numpy
+pandas==2.2.3
+scikit-learn==1.6.1
+joblib

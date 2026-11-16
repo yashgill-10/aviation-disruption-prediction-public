@@ -1,0 +1,79 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data files
+data/raw/*
+data/processed/*
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Model artifacts
+models/*.pkl
+models/*.joblib
+models/*.pt
+models/*.onnx
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Incoming handoffs (ZIP and extracted files)
+incoming_handoffs/
+
+# Verification environment and deployment bundle
+.venv-verify/
+site-bundle/
+
+# Private handoff archives and restricted artifacts (never commit)
+*.zip
+*.zip.sha256
+*.joblib
+*.pkl
+*.parquet
+*.csv.gz
+*.feather
+*.h5
+*.onnx
+*.npz
+*.npy
+
+# Row-level score/feature/target exports (compressed tables)
+*_scores.csv.gz
+*_features.csv.gz
+*_targets.csv.gz
+*_membership.csv.gz
+
+# Local handoff and private working directories
+handoff/
+private_inputs/
+*.mp4
+*.mkv
+*.sqlite
+*.db
