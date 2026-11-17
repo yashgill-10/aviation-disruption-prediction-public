@@ -10,6 +10,7 @@ Updated: 2026-11-16 (public release). This is an evidence checkpoint, not a clai
 - M3 reproducibility: the actual retrospective `train_evaluate_m3.py` implementation was recovered from the private final-submission handoff archive and is published under `m3/` with only external input paths parameterized via environment variables; its synthetic contract tests pass (8 tests). Trained models and row-level score exports remain private; input score exports are required to rerun and are not distributed.
 - `airport-network/error_analysis/` aggregate-only tables and reproduction script are now included; `airport-network/README.md` and dated status notes reconcile earlier pending/outstanding statements with the completed canonical exports, matched comparison, and M3 evaluation.
 - This document records evidence status; it does not upgrade exploratory results into validated operational claims.
+- Final checkpoint 2026-11-17: Omruthik's verified docs patch merged via PR #4 (patch SHA-256 `38DC7CC9…5B42`, 15 files, docs+manifest only). See `docs/FINAL_SUBMISSION_CHECKLIST.md` for the submission checklist, classification table, and future roadmap.
 
 ## Completed and verified locally
 
