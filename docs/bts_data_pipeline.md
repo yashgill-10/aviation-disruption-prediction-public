@@ -78,6 +78,8 @@ I rechecked all ZIP members in `data/raw` with CRC verification. The 48 requeste
 | 2022 train | 12/12 | 6,729,125 | 181,286 | 177,348 | 6,547,839 | all pass |
 | 2023 train | 12/12 | 6,847,899 | 87,943 | 84,529 | 6,759,956 | all pass |
 | 2024 validation | 12/12 | 7,079,061 | 96,315 | 92,970 | 6,982,746 | all pass |
+
+For 2024, the 92,970 rows with missing DepDel15 are contained within the 96,315 cancelled rows. This follows because the eligible count is exactly 7,079,061 − 96,315 = 6,982,746, and eligibility also requires a valid binary DepDel15. Do not add the missing-label count as a separate exclusion.
 | 2025 historical test partition (previously inspected) | 12/12 | 7,001,619 | 102,876 | 98,591 | 6,898,743 | all pass |
 | 2026 operational history | 7/12 available | — | — | — | Parquet files for Jan–Jul | all available archives pass |
 
