@@ -35,4 +35,4 @@ The Airport/Network scoring-time feature-builder hash still differs from the ava
 
 ## Decision
 
-For the inspected November–December sample, the stack shows better ranking and probability metrics and a recall-for-precision tradeoff. It does not uniformly improve thresholded performance at T−2h, and none of these metrics is a blind final estimate. Joint interpretation with Yash, a defined error-cost policy, and agreement on a future untouched evaluation period remain pending.
+For the inspected November–December sample, the stack has better ranking and probability metrics and a recall-for-precision tradeoff. It does not uniformly outperform the components on thresholded metrics at T−2h, and none of these values is a blind final estimate. A future evaluation period and its split-lock protocol remain provisional until data coverage, prospective timestamped collection, and joint approval are established.

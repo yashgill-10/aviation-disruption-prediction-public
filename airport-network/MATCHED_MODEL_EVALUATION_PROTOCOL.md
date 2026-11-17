@@ -1,73 +1,30 @@
-# Matched model evaluation protocol — draft for joint approval
+# Matched model evaluation protocol and executed scope
 
-**Status:** proposed; not jointly approved or run. This prepares the comparison without claiming canonical membership or combined-model results.
+This protocol records the rules used for the retrospective matched comparison. The project evaluation has been run on private, checksum-verified inputs; this public repository contains the implementation and aggregate reports but not row-level score exports, mappings, or cohort files.
 
-> **Status update (2026-11-16):** Written before joint integration completed. Canonical-key Airport/Network score exports have since been produced and validated locally with full coverage of the retrospective eligible cohorts, the matched October–December component comparison and the November–December M3 stacking evaluation have been run, and the M3 implementation is published under `m3/`. Statements below about pending canonical coverage, blocked handoffs, or outstanding combined-model evaluation describe the state at the time of writing. Live inference for Airport/Network and M3 remains unvalidated; see `docs/PROJECT_COMPLETION_STATUS.md`.
+## Cohorts and horizon handling
 
-## Comparison population
+- Use canonical `flight_id` membership independently for T−2h and T−30m; never combine the horizon populations.
+- Require one row per canonical ID and common `delay_15` target. Preserve unavailable scores and explicit reasons in coverage summaries; do not replace them with zero.
+- For each component comparison, calculate metrics on the exact common IDs scored by both Flight/Weather and Airport/Network and report the denominator. Do not infer membership from aggregate counts.
+- The combined model must be an actual saved M3 prediction. Never synthesize it by averaging component outputs.
 
-- Use the jointly approved canonical `flight_id` cohort separately for T−2h and T−30m.
-- Each cohort row must include the agreed `delay_15` target and, if used in reporting, a fixed partition column.
-- Require every model export to contain exactly one row for every cohort ID, including explicit unavailable rows. Reject missing or extra IDs; do not silently intersect or drop rows.
-- Report each model's scored/unavailable coverage over the full approved cohort. For metric comparisons, use the same intersection of IDs scored by all three variants and report its size and delay rate.
-- The three variants are Flight/Weather-only, Airport/Network-only, and combined. A combined prediction file must be produced by the agreed combined model; do not synthesize it from the other two scores.
+## Scores and metrics
 
-## Score and metric rules
+Existing probabilities, saved thresholds, and binary predictions are used unchanged. Metrics include average precision, ROC-AUC, Brier score where available, precision, recall, F1, balanced accuracy, and coverage. The Oct–Dec component comparison uses 1,768,340 common flights at T−2h and 1,768,222 at T−30m. The November–December M3 evaluation has separate denominators of 1,159,155 and 1,159,076. Results are retrospective/exploratory; neither period is a blind final test. No significance tests or confidence intervals were saved for the joint point-estimate comparisons.
 
-- Preserve each model's existing saved probability, threshold, and thresholded prediction. Do not tune or recalibrate thresholds on October–December 2024, which has already been inspected.
-- On the all-three-scored matched IDs, report average precision (PR-AUC), ROC-AUC, Brier score, log loss, accuracy, precision, recall, F1, balanced accuracy, confusion matrix, and positive-label rate using each model's recorded threshold.
-- Report unavailable rows by model and explicit reason over the full approved cohort. Never replace missing predictions with zero.
-- Preserve the same target and partition across all models; fail if any row-level target or partition disagrees.
-- Label October–December results retrospective/exploratory, not a blind final estimate. Clearly distinguish retrospective BTS feature availability from operationally verified availability.
+## M3 chronology
 
-## Standardized score input schema
+M3 was trained separately per horizon on September 2024 component probabilities, selected an operating threshold on October 2024, and evaluated on November–December 2024. It did not retrain the component models. The September row-level M3 training-ID list was not saved. Its fitted model files were serialized after evaluation predictions and metrics were calculated; no Nov–Dec refit is documented, but a pre-evaluation serialized model hash is not established. The result remains exploratory.
 
-One file per model and horizon, normalized to these columns before evaluation:
+## Canonical key construction
 
-| Column | Required | Rule |
-| --- | --- | --- |
-| `flight_id` | Yes | Canonical key, unique and nonmissing. |
-| `score_status` | Yes | Exactly `scored` or `unavailable`. |
-| `delay_probability` | Yes | Finite in [0, 1] when scored; null when unavailable. |
-| `decision_threshold` | Yes | Finite, constant within each model/horizon, in [0, 1] when scored. |
-| `predicted_delay_15` | Yes | 0/1 when scored and consistent with the recorded threshold; null when unavailable. |
-| `unavailable_reason` | Yes | Nonempty for every unavailable row; empty for scored rows. |
-| `forecast_horizon` | Optional | If present, every row must match the selected horizon. |
-| `delay_15`, `partition` | Optional | If present, must match the canonical cohort file exactly. |
+`evaluation/join_ordinal_scores_to_canonical_ids.py` consumes the preserved cleaned-input ordinal and the approved mapping/membership artifacts. It keeps unresolved or unscorable cohort rows explicit and validates exact IDs, targets, status, and provenance. `evaluation/evaluate_matched_models.py` enforces key uniqueness and exact cohort coverage, rejects target/horizon inconsistencies, and calculates comparison metrics. The full project invocation requires private approved inputs that are intentionally not in this repository; synthetic contract tests can be run with the commands in `README.md`.
 
-The comparison script refuses incomplete key coverage, duplicate IDs, extra IDs, score/status contradictions, target disagreement, threshold variation, or an empty all-three-scored set. It writes row-level matched predictions and a metrics/coverage JSON report only after those checks pass.
+The historical source-ordinal error-analysis tables are not this canonical matched comparison. They include 39 unresolved ambiguous records per horizon without canonical IDs. Those 39 remain unresolved and are excluded from the matched canonical denominators above. See `error_analysis/README.md`.
 
-## Current dependencies
+## Scope and remaining limitations
 
-Before evaluation, re-key the local Airport/Network ordinal scores with `join_ordinal_scores_to_canonical_ids.py` using the verified canonical mapping, exact cohort-membership files, and score run manifest. The join must retain each cohort ID, preserve explicit unavailable statuses/reasons, and leave any non-unique mapping unresolved; it must not infer IDs or turn missing scores into zero. It records source file checksums and copies the model/builder/run provenance into its output manifest.
+The comparison is between existing pipelines on matched flights; it does not isolate a causal effect of feature additions. Airport/Network scoring-builder provenance remains unresolved, and schedule-vintage, BTS history publication/ingestion, recent airport-state, and live eligibility timestamps are unverified. Flight/Weather weather receipt time is approximated from observation time plus 15 minutes. Model-family, hyperparameter, and feature-selection histories were not fully recovered. No live readiness claim follows from the retrospective comparison.
 
-This workflow is prepared locally but blocked pending approved access to the canonical mapping and Flight/Weather score artifacts, which are restricted private handoff files not included in this repository. The join and evaluator have passed an end-to-end synthetic smoke check for both horizons (four synthetic flights per cohort); they have not been run against project mapping or cohort files. Restricted artifacts must only be obtained through the approved private handoff channel. No dashboard integration is authorized by this protocol draft.
-
-## Run sequence after approved artifacts are available
-
-First verify the mapping, membership, score-export, and run-manifest checksums against the signed/approved handoff manifest. Use only checksum-verified copies obtained through the approved private channel; do not substitute unverified files. Then run the ordinal join from the project root, using the local Airport/Network full-ordinal exports and the verified canonical mapping/membership inputs:
-
-```powershell
-python airport-network/evaluation/join_ordinal_scores_to_canonical_ids.py `
-  --mapping "C:\handoff\cleaned_row_to_canonical_mapping.csv.gz" `
-  --expected-mapping-sha256 "REPLACE_WITH_VERIFIED_SHA256" `
-  --t2h-membership "C:\handoff\t_minus_2h_membership.csv.gz" `
-  --t30m-membership "C:\handoff\t_minus_30m_membership.csv.gz" `
-  --t2h-scores "C:\secure\preliminary_t_minus_2h_scores_by_source_ordinal.csv.gz" `
-  --t30m-scores "C:\secure\preliminary_t_minus_30m_scores_by_source_ordinal.csv.gz" `
-  --source-run-manifest "C:\secure\run_manifest.json" `
-  --output-dir "C:\secure\phase2_canonical_exports"
-```
-
-Review the join manifest, confirm exact membership counts and no missing/extra IDs, retain any explicit unavailable rows, and resolve any target conflicts with the data owner. Only then run the evaluator separately for each horizon, supplying the approved cohort with `flight_id,delay_15[,partition]`, the Airport/Network canonical export generated above, the canonical Flight/Weather export, and an actual combined-model export:
-
-```powershell
-python airport-network/evaluation/evaluate_matched_models.py `
-  --horizon 'T-2h' --cohort "C:\handoff\t_minus_2h_cohort.csv.gz" `
-  --flight-weather "C:\handoff\flight_weather_t_minus_2h.csv.gz" `
-  --airport-network "C:\secure\phase2_canonical_exports\airport_network_t_minus_2h_canonical_scores.csv.gz" `
-  --combined "C:\handoff\combined_t_minus_2h.csv.gz" `
-  --output-stem "C:\secure\matched_model_comparison\aviation_models"
-```
-
-Repeat with `--horizon 'T-30m'` and the corresponding T−30m inputs. Do not fabricate a combined score by blending the other models. These commands are documented only; they have not been run on project artifacts.
+See `../docs/PROJECT_COMPLETION_STATUS.md` and `../reports/final_joint_exploratory_research_report.md` for the saved results and exact denominators.

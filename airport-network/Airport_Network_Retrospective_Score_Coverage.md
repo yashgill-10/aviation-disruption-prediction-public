@@ -1,39 +1,34 @@
-# Airport/Network retrospective score-export coverage
+# Airport/Network retrospective score coverage and provenance
 
-**Status: local retrospective source-ordinal coverage only.** This report records the available Airport/Network score coverage before canonical identity resolution. It does not report coverage on the approved canonical cohorts, live eligible flights, or operationally available features.
+This report distinguishes the original full-year, source-ordinal exports from the later canonical-ID exports used in the joint comparison. The score files, model bundle, mapping, and row-level IDs are private and are not distributed here.
 
-> **Status update (2026-11-16):** Written before joint integration completed. Canonical-key Airport/Network score exports have since been produced and validated locally with full coverage of the retrospective eligible cohorts, the matched October–December component comparison and the November–December M3 stacking evaluation have been run, and the M3 implementation is published under `m3/`. Statements below about pending canonical coverage, blocked handoffs, or outstanding combined-model evaluation describe the state at the time of writing. Live inference for Airport/Network and M3 remains unvalidated; see `docs/PROJECT_COMPLETION_STATUS.md`.
+## Preliminary full-year exports — source ordinal
 
-## Counts and score status
+The original full-year exports used `cleaned_input_row_ordinal`, a 1-based source record ordinal. They retained unavailable rows rather than assigning a zero probability.
 
-| Horizon | Retrospective ordinal cohort rows | Scored | Explicitly unavailable | Coverage | Unavailable reason |
-| --- | ---: | ---: | ---: | ---: | --- |
-| T−2h | 6,982,766 | 6,982,656 | 110 | 99.998425% | `duplicate_source_row_removed_before_training_features` (110) |
-| T−30m | 6,982,332 | 6,982,222 | 110 | 99.998425% | `duplicate_source_row_removed_before_training_features` (110) |
+| Horizon | Source rows | Scored | Unavailable | Coverage |
+| --- | ---: | ---: | ---: | ---: |
+| T−2h | 6,982,766 | 6,982,656 | 110 | 99.998425% |
+| T−30m | 6,982,332 | 6,982,222 | 110 | 99.998425% |
 
-Unavailable rows remain present with null probability and an explicit reason; they were not converted to zero. These preliminary exports use `cleaned_input_row_ordinal`, not canonical `flight_id`.
+The unavailable reason was `duplicate_source_row_removed_before_training_features`. These ordinal diagnostics are useful for auditing the original export, but their counts are not the canonical evaluation denominators.
 
-## Local artifact identity
+## Canonical retrospective cohorts — separately per horizon
 
-All six local compressed artifacts below were re-hashed and matched the recorded SHA-256 values on 2026-11-03:
+The Phase 2 mapping preserves all 6,982,766 source ordinals. It assigns unambiguous IDs to 6,982,525 records; 220 ambiguous records, one identity-incomplete record, and 20 unmatched records remain without canonical IDs. The unresolved records were not assigned IDs by inference.
 
-| Artifact | Bytes | SHA-256 |
-| --- | ---: | --- |
-| Preliminary full-year T−2h scores | 312,859,043 | `3058e8bb078714ed24278e23c6cbfeb614a0c56b91483844585acb28512bf918` |
-| Preliminary full-year T−30m scores | 320,453,907 | `cc73133c83821bcc4a4cac7a907002fdb4061d47152474148daaa32705293fef` |
-| Retrospective eligible T−2h score export | 246,532,057 | `04bfee3e391e88632bb4d5dd3c8ed64ce5bdf3984a231886946693d570617756` |
-| Retrospective eligible T−30m score export | 251,577,334 | `57f264e0a75957304ba666f4b08bff8074d5b9f8df154d67d2f44aa8dda56296` |
-| Local T−2h ordinal cohort list | 14,751,951 | `6b935b880c5fa06a728c00b8253f0dd57b5d8848aaafe7bbc14b5f1bbca1c30a` |
-| Local T−30m ordinal cohort list | 14,752,955 | `b52ad078f690377c26333ede121b4e1dbaf20b0058b59346fa43d4e84b4c46e6` |
+The verified retrospective membership files contain 6,982,525 canonical IDs at T−2h and 6,982,091 at T−30m. The canonical Airport/Network score exports were validated against those exact horizon-specific memberships and report 100% coverage: 6,982,525/6,982,525 at T−2h and 6,982,091/6,982,091 at T−30m. These files and their row-level validation evidence remain in the private handoff; the public summary is in `../docs/PROJECT_COMPLETION_STATUS.md`.
 
-The filtered export manifest also records the model bundle SHA-256 `9dca5d3bb2e8e2af0cf9bca3a2245584b83b10e2cfb0e883fb90388fd0b87b5a`, thresholds, source score hashes, and the exact count/status totals. The underlying row-level score files are not included in this repository or handoff ZIP.
+The memberships use final BTS cancellation and actual-departure outcomes to define retrospective eligibility. They do not prove a flight could have been identified as eligible at prediction time. Never substitute matching aggregate counts for exact ID-set reconciliation.
 
-## Canonical coverage is not yet established
+## October–December component comparison
 
-The independent reconciliation reports unambiguous canonical cohort counts of 6,982,525 at T−2h and 6,982,091 at T−30m. The local retrospective ordinal populations contain 241 more rows per horizon. The reconciliation accounts for cleaned-to-raw and identity exceptions, but the verified mapping and cohort membership are not available in this workspace. Therefore the 110 unavailable score rows cannot yet be assigned to or excluded from the canonical cohort, and canonical score coverage cannot be computed from counts alone.
+The matched canonical comparison has 1,768,340 common scored flights at T−2h and 1,768,222 at T−30m. This differs by 39 from each preliminary ordinal-keyed error-analysis population because 39 ambiguous records per horizon were retained in the ordinal diagnostics but have no canonical ID. They are excluded from the canonical matched comparison without inferred identities. See `../docs/PROJECT_COMPLETION_STATUS.md` for per-model results.
 
-The row-ordinal cohorts were constructed from final BTS status fields (`CANCELLED`, `DEP_DELAY`, and `delay_15`). They are retrospective outcome-derived populations, not live eligibility. Recent airport activity and prior BTS aggregates lack timestamped evidence of when they were observable. The score-run manifest's recorded builder hash also differs from the available builder hash; the exact scoring builder remains unresolved.
+## Artifact provenance and limitations
 
-## Next validation after approved transfer
+The preliminary exports had recorded SHA-256 values documented in the private run manifest: T−2h `3058e8bb078714ed24278e23c6cbfeb614a0c56b91483844585acb28512bf918`; T−30m `cc73133c83821bcc4a4cac7a907002fdb4061d47152474148daaa32705293fef`. Row-level files are deliberately not published. The bundle SHA recorded for that score run is `9dca5d3bb2e8e2af0cf9bca3a2245584b83b10e2cfb0e883fb90388fd0b87b5a`.
 
-After the mapping and cohort files are available through an IT-cleared channel, verify their hashes, join each horizon by the preserved source ordinal, and compare exact ID membership. Keep every canonical cohort row, preserve explicit unavailable statuses/reasons, and report scored/unavailable coverage on those exact IDs. Do not infer identities or treat matching counts as proof of matching membership.
+The score-run manifest records builder SHA-256 `a77c70db0e033e85561186c7c947bd8957b024edfd7630e83e356ed175fe5b36`; a contemporaneous local-builder field records `c107a5eb379da9830b7cb288082b1807422f5cfa43af7f9ba6283d3a1698a3cf`. Neither is the byte hash of the currently published reference builder. The exact original scoring-time builder was not recovered, so this public implementation is a reference and full code-level score reproduction is unverified.
+
+Schedule snapshot/revision times, BTS publication or ingestion times, recent airport event timestamps, and live cancellation/departure eligibility are unverified. Thus the results are retrospective research evidence, not operational availability or live-readiness evidence.

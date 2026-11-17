@@ -1,50 +1,31 @@
-# Airport/Network results and limitations
+# Airport/Network results and limitations — website reference
 
-> **Review draft.** These are retrospective 2024 prototype results, not production performance claims. The October–December 2024 test period has already been inspected. The draft is not yet approved or published as website content.
+This document is a supporting content reference. These are retrospective 2024 research results, not production-performance claims. October–December 2024 has been inspected and is exploratory, not a blind final test.
 
-> **Status update (2026-11-16):** Written before joint integration completed. Canonical-key Airport/Network score exports have since been produced and validated locally with full coverage of the retrospective eligible cohorts, the matched October–December component comparison and the November–December M3 stacking evaluation have been run, and the M3 implementation is published under `m3/`. Statements below about pending canonical coverage, blocked handoffs, or outstanding combined-model evaluation describe the state at the time of writing. Live inference for Airport/Network and M3 remains unvalidated; see `docs/PROJECT_COMPLETION_STATUS.md`.
+## Original feature-ablation experiment
 
-## Retrospective model comparison
+The archived experiment compared schedule/route features with schedule/route plus Airport/Network context. It used a 200,000-flight January–August training sample and September operating-threshold selection; the threshold was fixed for October–December. Its aggregate metrics are in `Airport_Network_ML_Summary.md`. The baseline retained no row-level predictions, so paired uncertainty cannot be calculated and the comparison is not causal evidence.
 
-The saved experiment compared schedule/route features with schedule/route plus Airport/Network context. Models used a 200,000-flight January–August training sample; September was used to select the threshold, which was then fixed for the October–December test period. The target is departure delay of at least 15 minutes among eligible non-cancelled flights.
+## Canonical matched comparison
 
-| Horizon | Feature set | Threshold | Accuracy | Precision | Recall | F1 | Balanced accuracy | PR-AUC |
-| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| T−2h | Schedule/route | 0.5227 | 60.67% | 22.46% | 56.29% | 32.11% | 58.91% | 22.62% |
-| T−2h | Schedule/route + Airport/Network | 0.4704 | 63.21% | 24.48% | 58.80% | 34.57% | 61.44% | 29.63% |
-| T−30m | Schedule/route | 0.5201 | 58.50% | 22.23% | 60.49% | 32.51% | 59.30% | 22.97% |
-| T−30m | Schedule/route + Airport/Network | 0.4631 | 65.60% | 25.68% | 57.10% | 35.43% | 62.19% | 31.38% |
+The later joint comparison used exactly matched canonical IDs and targets for Flight/Weather and Airport/Network, separately by horizon: 1,768,340 flights at T−2h and 1,768,222 at T−30m. The corresponding component metrics are reported in `../docs/PROJECT_COMPLETION_STATUS.md` and the final joint report. The full-year canonical memberships contain 6,982,525 T−2h and 6,982,091 T−30m IDs, with 100% Airport/Network score coverage recorded in the private run artifacts.
 
-The archived report shows higher PR-AUC and F1 for the Airport/Network configuration at both horizons. At T−30m, it also shows the threshold-specific trade-off: precision is higher while recall is lower than for schedule/route alone. The always-on-time baseline had 83.47% accuracy but detected no delayed flights, so accuracy alone is not informative for this imbalanced target.
+These denominators are distinct from the source-ordinal error-analysis counts: 1,768,379 at T−2h and 1,768,261 at T−30m. The 39 additional ordinal records in each horizon are unresolved ambiguous identities without canonical IDs. They remain in ordinal diagnostics but are excluded from the canonical matched comparison; no identity was inferred.
 
-These are aggregate results from the original retrospective feature-ablation report. The archived report does not retain row-level predictions for the schedule/route baseline, so paired per-flight differences and uncertainty for the metric changes cannot be independently estimated. The feature-set comparison is not causal proof that Airport/Network features alone caused the gains.
+## Feature definition and retrospective eligibility
 
-## Prediction coverage and aircraft-rotation pilot
+Airport/Network evaluates separate T−2h and T−30m models. Its scheduled origin-volume feature counts scheduled departures in `[target scheduled departure − 2 hours, target scheduled departure)` at both horizons. It is anchored to the target scheduled departure. Prior-seven-day airport summaries and recent airport activity are derived/reconstructed from BTS data.
 
-The local full-year retrospective Airport/Network exports scored 6,982,656 of 6,982,766 source-ordinal rows at T−2h and 6,982,222 of 6,982,332 at T−30m. Each horizon retains 110 explicit unavailable rows, all marked `duplicate_source_row_removed_before_training_features`; they are not assigned zero scores. These are source-ordinal coverage figures, not coverage on the approved canonical-ID cohorts. Canonical coverage remains unknown until the verified mapping is joined.
+Retrospective cohorts exclude cancelled flights and flights whose reconstructed actual departure was at or before the relevant cutoff. This uses final BTS outcomes; it does not establish live flight eligibility. Schedule-vintage, BTS publication/ingestion, and recent operational-event timestamps have not been verified.
 
-A separate aircraft-rotation pilot reported a unique tail match for 119,952 of 120,000 sampled rows and 47 ambiguous sampled keys. The reported 99.90% prior-arrival feature coverage is conditional on a unique tail match and valid scheduled cutoff UTC because rows missing either are removed before that percentage is computed. Overall prior-arrival coverage across the full pilot sample was not established. The horizon samples differ; only baseline versus aircraft-augmented results within each horizon use the same retained rows. These pilot figures are retrospective BTS evidence, not live operational availability.
+## Error, calibration, and subgroup evidence
 
-## What the features represent
+The ordinal-keyed Airport/Network October–December analysis reports false positives/false negatives at the saved thresholds, monthly/carrier/origin recall, and 10-bin expected calibration error of 27.94% (T−2h) and 27.36% (T−30m). The errors and subgroup patterns are descriptive; the score probabilities are not shown to be operationally calibrated. Subgroup intervals are simple Wilson binomial intervals with a minimum group size of 1,000; they do not account for clustering, multiple comparisons, temporal dependence, selection, or data-pipeline uncertainty. Refer to `Airport_Network_Oct_Dec_Error_Analysis.md` and `error_analysis/README.md` for counts and interpretation.
 
-The saved Airport/Network model uses prior-seven-day airport aggregates, scheduled origin-airport departure volume, and recent origin-airport activity. The scheduled-volume feature counts departures in `[target scheduled departure − 2 hours, target scheduled departure)` at both horizons. It is anchored to the target flight's scheduled departure, not to the forecast cutoff.
+The separate November–December M3 evaluation is completed and exploratory. It uses September meta-training and October threshold selection. M3 has higher AP, ROC-AUC, recall and lower Brier score than both components at both horizons; precision is lower, and F1/balanced accuracy are mixed. These descriptive values do not establish statistical significance or live readiness. See `../m3/` and the final joint report.
 
-## Availability, eligibility, and reproducibility limits
+## Provenance and limits
 
-- Schedule-vintage timestamps have not been verified. It is not established that the scheduled-volume values reflect information available at either prediction cutoff.
-- Prior-seven-day aggregates and recent activity are derived or reconstructed from BTS records. Publication, event, and ingestion timestamps establishing prediction-time availability are missing; do not describe these as verified live airport conditions.
-- The retrospective cohort uses final BTS cancellation and departure outcomes to exclude cancelled flights and flights already departed by the cutoff. Those final outcomes do not establish live eligibility. Timestamped operational status is still needed.
-- The latest local row-level Airport/Network exports are keyed by cleaned-source row ordinal, not verified canonical `flight_id`. They have not been matched to the Flight/Weather scores or a jointly verified common cohort.
-- The locally verified 110-unavailable-row counts do not establish whether those records are members of the canonical cohort; the source-row ordinal crosswalk is required to determine canonical score coverage.
-- The score manifest records a builder SHA-256 that differs from the currently available builder. The trained feature names/order match, but the exact scoring implementation has not been recovered, so full code-level reproduction remains unresolved.
-- The shown October–December period has already been inspected. It must not be described as an untouched final test or reused for threshold or calibration tuning.
+The exact Airport/Network scoring-time feature builder recorded in the run manifest has not been recovered. The public feature builder is a reference implementation; it is not byte-identical evidence for the original scoring-time implementation. The canonical score exports, model, mapping, and row-level predictions are private and intentionally absent from this public repository. Synthetic tests validate interfaces and contracts, not full model reproducibility.
 
-Until the builder provenance, canonical cohorts, row-level predictions, and operational feature/eligibility timestamps are reviewed, treat these metrics as retrospective prototype results only. A joint Flight/Weather-only, Airport/Network-only, and combined-model comparison on identical canonical flights and temporal partitions remains outstanding.
-
-See [the feature-availability audit](Airport_Network_Feature_Availability_Audit.md) for the evidence and missing timestamps for each trained feature and the retrospective eligibility rules.
-
-See [the October–December error analysis](Airport_Network_Oct_Dec_Error_Analysis.md) for aggregate counts, calibration diagnostics, subgroup patterns, and their interpretation limits.
-
-## Source
-
-The aggregate results are in `colab_model_artifacts/aviation_airport_network_results.csv`. Feature definitions and prediction-output semantics are documented in `Airport_Network_Feature_Schema.md` and `Prediction_Export_Contract.md`.
+Flight/Weather and Airport/Network inputs were not proven available at prediction cutoffs. M3's September row-level training-ID list was not saved, and its serialized model files were written after evaluation predictions/metrics were calculated; no pre-evaluation model artifact hash is established. No untouched final test has been established; 2025 was inspected. Do not claim causality, statistical significance, or production/live readiness.
