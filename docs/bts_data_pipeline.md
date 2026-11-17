@@ -42,7 +42,7 @@ Download only the months that are still missing. The downloader takes an OS-mana
 
 - Target: BTS `DepDel15`, retained as binary 0/1.
 - Eligible rows: `Cancelled == 0`, a valid 0/1 `DepDel15`, and a valid `FlightDate` inside the year/month represented by the source archive. Every cancelled flight is excluded, even when BTS supplies a target value.
-- Chronological splits: 2022-2023 train, 2024 validation, and 2025 final test.
+- Chronological dataset partitions: 2022-2023 train, 2024 validation, and a complete 2025 historical partition stored under `test/`. Because the frozen schedule/history baseline was previously evaluated on 2025, this partition is not a blind final test for the integrated project.
 - Test protection: no 2025 Parquet files are retained unless all 12 monthly archives are structurally valid, every month has at least one valid in-month `FlightDate`, and all 12 CSV streams finish with valid CRCs. If a 2025 month is missing or fails processing, the entire 2025 test year is withheld.
 - Features written: `FlightDate`, `Reporting_Airline`, `Origin`, `Dest`, scheduled `CRSDepTime` and `CRSArrTime`, `Distance`, and `CRSElapsedTime`. `Cancelled` is used only for row eligibility.
 - Post-outcome fields are not read into the dataset, including actual departure/arrival times, delay minutes, delay causes, `Diverted`, and `CancellationCode`. Weather and network features are not included yet.
@@ -78,7 +78,11 @@ I rechecked all ZIP members in `data/raw` with CRC verification. The 48 requeste
 | 2022 train | 12/12 | 6,729,125 | 181,286 | 177,348 | 6,547,839 | all pass |
 | 2023 train | 12/12 | 6,847,899 | 87,943 | 84,529 | 6,759,956 | all pass |
 | 2024 validation | 12/12 | 7,079,061 | 96,315 | 92,970 | 6,982,746 | all pass |
-| 2025 test partition | 12/12 | 7,001,619 | 102,876 | 98,591 | 6,898,743 | all pass |
+| 2025 historical test partition (previously inspected) | 12/12 | 7,001,619 | 102,876 | 98,591 | 6,898,743 | all pass |
 | 2026 operational history | 7/12 available | — | — | — | Parquet files for Jan–Jul | all available archives pass |
 
+For 2024, the 92,970 rows with missing DepDel15 are contained within the 96,315 cancelled rows. This follows because the eligible count is exactly 7,079,061 − 96,315 = 6,982,746, and eligibility also requires a valid binary DepDel15. Do not add the missing-label count as a separate exclusion.
+
 The 2022–2025 audits report no unknown cancellation values, invalid or non-binary targets, invalid dates, or out-of-month dates. Eligible rows are retained only after excluding cancellations and missing labels. The 2025 partition is complete as a dataset split, but it is **not a blind final evaluation**: an earlier frozen schedule/history baseline comparison already scored and inspected it. See `docs/final_test_evaluation.md`.
+
+The separate Flight/Weather runtime handoff reviewed for this submission contains operational-history Parquet files for January–July 2026 only. An August 2026 archive/Parquet update was not present in that handoff, so the reported August row count and date coverage are not verified here. Keep operational-history data separate from the training, validation, and historical test partitions.

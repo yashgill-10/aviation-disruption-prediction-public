@@ -41,6 +41,34 @@ The original 1-based cleaned-input row ordinals are:
 6616386, 6624980, 6729063, 6737112, 6737131, 6795736, 6926307
 ```
 
+## Data preprocessing and feature construction
+
+The model datasets begin with monthly U.S. BTS TranStats On-Time Performance archives. The preprocessing pipeline inventories monthly ZIPs, checks archive members and CRCs, validates that each flight date belongs to the archive month, and writes eligible records to monthly Parquet partitions with an audit of source rows and exclusions. Cancelled flights and records without a valid binary `DepDel15` label are excluded from the supervised modelling table. `DepDel15` is the target; actual departure/arrival times, delay minutes and causes, cancellation outcomes, and other post-departure outcomes are not same-flight predictors.
+
+The chronological modelling partitions are 2022–2023 training and 2024 validation/development. The complete 2025 archive partition is retained as historical data, but the frozen schedule/history baseline was previously evaluated on it; it is not a blind final test for the integrated models. A checked local Flight/Weather runtime handoff contained separate operational-history Parquet files for January–July 2026. Those files support inference-history lookbacks only, not training or evaluation. An August 2026 update is not established by the reviewed handoff: it contains no August archive, Parquet partition, or source manifest supporting the reported 597,076-row figure, so this report does not claim August coverage.
+
+The BTS monthly audit counted 7,079,061 source rows for 2024; 96,315 cancelled rows were excluded, leaving 6,982,746 eligible modelling rows. The audit also counted 92,970 rows with missing `DepDel15`; the missing-label rows are contained within the cancelled rows and should not be added as a separate exclusion. The separate cleaned 2024 identity source has 6,982,766 rows. These are different artifacts produced by different processing steps and are not interchangeable denominators. The canonical mapping resolves 6,982,525 cleaned source rows to unique flight IDs; the remaining 241 rows stay unresolved as 220 ambiguous, one identity-incomplete, and 20 unmatched. `bts-flight-v1` computes a SHA-256 identity from nine normalized scheduled-flight fields: `FlightDate`, `DOT_ID_Reporting_Airline`, `Reporting_Airline`, `Flight_Number_Reporting_Airline`, `OriginAirportID`, `Origin`, `DestAirportID`, `Dest`, and `CRSDepTime`. A stable identity allows the workstreams to join the same scheduled flight after sorting or filtering; unresolved records are never assigned an inferred identity.
+
+Flight/Weather predictors combine scheduled fields with strictly prior historical delay summaries. Historical features include three prior completed calendar months and prior 7-day/30-day completed calendar-day windows, aggregated globally and by groups such as airline, origin, route, and origin-hour where supported. Daily windows exclude the target flight's entire date. Sparse group rates use a 50-flight weighted backoff to the matching global rate. Weather predictors use NOAA/NCEI GHCNh FM15 METAR observations mapped to BTS airports. The historical as-of rule requires the observation time plus a 15-minute availability proxy to be at or before each flight's horizon cutoff; reports older than three hours are treated as unavailable, with explicit missing-weather indicators. This archive-based proxy does not establish the original real-time receipt or ingestion timestamp.
+
+Airport/Network predictors include scheduled-flight information, prior-seven-day airport aggregates, and the scheduled origin-departure count in the half-open interval `[scheduled departure − 2 hours, scheduled departure)`. Recent origin activity is reconstructed from final BTS outcomes. Schedule-vintage timestamps and publication/revision history were not available, and retrospective BTS outcomes do not prove that those activity values were observable at either prediction cutoff. Their operational availability remains unverified.
+
+M3 receives the continuous Flight/Weather and Airport/Network probabilities separately for each horizon. It clips probabilities to `[1e-6, 1 − 1e-6]`, transforms them to logits, standardizes them with a scaler fitted on September 2024 rows, and fits an L2 Logistic Regression stacker on September. The operating threshold is selected on October by maximizing F1; November–December is the retrospective exploratory evaluation. The exact row-level September meta-training ID list was not saved.
+
+The processing sequence is: **monthly BTS and NOAA data → archive/date validation and preprocessing → canonical flight identity → horizon-specific Flight/Weather and Airport/Network features → continuous component scores → M3 logistic stack → retrospective evaluation**. See [the BTS pipeline](../docs/bts_data_pipeline.md), [weather feature plan](../docs/weather_data_plan.md), [canonical identity build](../docs/canonical_flight_identity_build_2024.md), and [Airport/Network feature schema](../airport-network/Airport_Network_Feature_Schema.md) for implementation details.
+
+## Model development progression
+
+The research developed through distinct experiments rather than one shared performance table:
+
+1. **Schedule-only baseline:** scheduled airline, route, times, distance, and elapsed time establish a simple starting point.
+2. **Historical-delay features:** strictly prior three-month and expanded 7/30-day delay summaries add historical context; the history experiment is evaluated on July–December 2024.
+3. **Flight/Weather horizons:** observed METAR features are evaluated separately at T−2h and T−30m in the July–December 2024 ablation.
+4. **Airport/Network:** airport state and recent network activity form a separate component pipeline, compared with Flight/Weather on common October–December 2024 canonical flights.
+5. **M3 logistic stack:** continuous component probabilities are combined using September meta-training, October threshold selection, and November–December exploratory evaluation.
+
+The earlier 2025 frozen-baseline comparison is a separate historical exploration, not an evaluation of the later integrated models and not a blind holdout. The ablation, October–December component comparison, November–December M3 evaluation, and 2025 baseline exploration use distinct protocols and denominators.
+
 ## Model methodology and chronology
 
 ### Flight/Weather
@@ -116,6 +144,16 @@ The two evaluation periods are distinct. The October–December table is the com
 | T−30m | Airport/Network | 1,768,222 | 0.313754 | 0.673690 | 0.256832 | 0.570994 | 0.354301 | 0.621918 | 0.463141 (September) |
 
 The saved matched October–December report does not provide Brier scores for this table. This period had already been inspected and is exploratory.
+
+### July–December 2024 Flight/Weather feature ablation
+
+| Feature set | Average precision | ROC-AUC | Calibrated Brier | F1 |
+|---|---:|---:|---:|---:|
+| Schedule + historical delay | 0.3611 | 0.6903 | 0.1452 | 0.4105 |
+| Schedule + history + observed weather, T−2h | 0.3608 | 0.6882 | 0.1457 | 0.4065 |
+| Schedule + history + observed weather, T−30m | 0.3648 | 0.6898 | 0.1454 | 0.4066 |
+
+The T−2h weather result was effectively neutral on average precision. T−30m increased average precision by 0.0037 over the history-only model, while ROC-AUC and F1 were slightly lower and calibrated Brier was slightly higher (worse); these changes are small and do not establish a general or causal weather benefit. This July–December ablation is separate from the October–December component comparison and the November–December M3 evaluation. The exact source table and additional metrics are in [`weather_data_plan.md`](../docs/weather_data_plan.md).
 
 ### November–December M3 evaluation
 
