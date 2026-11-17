@@ -8,9 +8,9 @@ This folder contains Omruthik's Airport/Network workstream for the joint Aviatio
 - `Airport_Network_Website_Results_Limitations_Draft.md` — review-only website copy for the retrospective results and unresolved availability, provenance, and cohort limits.
 - `Airport_Network_Feature_Availability_Audit.md` — feature-by-feature evidence and unresolved schedule-vintage, BTS-publication, event-time, timezone, and live-eligibility gaps.
 - `Airport_Network_Oct_Dec_Error_Analysis.md` — retrospective Oct–Dec 2024 performance and error analysis, with subgroup and calibration caveats.
-- `Airport_Network_Retrospective_Score_Coverage.md` — verified local ordinal-export hashes, score coverage, and explicit unavailable reasons; canonical cohort coverage is pending.
+- `Airport_Network_Retrospective_Score_Coverage.md` — verified local ordinal-export hashes, score coverage, and explicit unavailable reasons. Canonical-key score exports were subsequently produced and validated locally with 100% coverage of the retrospective eligible cohorts (see `docs/PROJECT_COMPLETION_STATUS.md`); the exports themselves remain private.
 - `error_analysis/` — aggregate-only supporting tables, holdout-report reconciliation, provenance summary, and local reproduction script; row-level score files are not included.
-- `evaluation/` and `MATCHED_MODEL_EVALUATION_PROTOCOL.md` — draft safe canonical-ID score join and strict three-model comparison tooling; synthetic-only validation, awaiting approved real handoff files.
+- `evaluation/` and `MATCHED_MODEL_EVALUATION_PROTOCOL.md` — canonical-ID score join and matched three-model comparison tooling. The canonical join was subsequently executed on the approved private handoff files; matched October–December component comparison and the November–December M3 stacking evaluation are reported in `docs/PROJECT_COMPLETION_STATUS.md` and `m3/`.
 - `Airport_Network_Integration_Handoff.md` — prediction contract, horizon-specific leakage rules, stable-ID join requirements, and combined-model handoff.
 - `Airport_Network_Feature_Schema.md` — feature definitions and cutoff availability rules.
 - `airport_network_inference.py` — horizon-aware inference helper and input/leakage/snapshot-cutoff guards.
@@ -24,13 +24,13 @@ This folder contains Omruthik's Airport/Network workstream for the joint Aviatio
 
 ## Reproducing the Colab experiments
 
-Use the cleaned 2024 BTS data in Colab. In the project notebook, run the Airport/Network cells in order: `2 → 4 → 5 → 8 → 27 → 28`. The aircraft-rotation pilot is a separate run. Follow the notebook's notes and skip the Flight/Weather-only cells when reproducing this workstream.
+Use the cleaned 2024 BTS data in Colab. In the project notebook (retained in the private development archive, not this repository), run the Airport/Network cells in order: `2 → 4 → 5 → 8 → 27 → 28`. The aircraft-rotation pilot is a separate run. Follow the notebook's notes and skip the Flight/Weather-only cells when reproducing this workstream.
 
 The repository excludes raw/processed CSVs, ZIPs, and serialized models through `.gitignore`. The cleaned data and trained model bundle remain in Colab. The source helper `airport_network_inference.py` needs that saved model bundle to perform inference.
 
 ## Results caveat
 
-The 2024 Oct–Dec metrics are a retrospective prototype comparison. The project README records that 2025 was previously opened for an exploratory frozen-baseline check and is therefore not a blind or untouched holdout; no blind final evaluation exists yet, and the combined Flight/Weather + Airport/Network model remains outstanding. The BTS-derived recent-activity and aircraft-arrival features have not been verified as available from a timestamped operational feed by each cutoff, so they do not establish production readiness.
+The 2024 Oct–Dec metrics are a retrospective prototype comparison. The project README records that 2025 was previously opened for an exploratory frozen-baseline check and is therefore not a blind or untouched holdout; no blind final evaluation exists yet. The combined model is the M3 logistic stack: its retrospective September meta-training / October threshold-selection / November–December evaluation is documented in `m3/` and `docs/PROJECT_COMPLETION_STATUS.md`; M3 and Airport/Network live inference remain unvalidated. The BTS-derived recent-activity and aircraft-arrival features have not been verified as available from a timestamped operational feed by each cutoff, so they do not establish production readiness.
 
 ## Reproducible interface checks
 

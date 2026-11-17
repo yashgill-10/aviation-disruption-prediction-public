@@ -1,0 +1,53 @@
+{
+  "report_date": "2026-11-03",
+  "analysis_period": "2024-10-01 through 2024-12-31",
+  "target_definition": "DEP_DELAY >= 15 minutes among non-cancelled flights",
+  "analysis_key": "cleaned_input_row_ordinal; canonical flight_id not assigned",
+  "interpretation": "Retrospective descriptive analysis; period already inspected; not a blind final test or matched three-model evaluation.",
+  "feature_availability_status": "retrospective_bts_availability_unverified",
+  "eligibility_rules": {
+    "T−2h": "common and final BTS DEP_DELAY > -120 minutes",
+    "T−30m": "common and final BTS DEP_DELAY > -30 minutes",
+    "common": "valid 2024 FL_DATE consistent with YEAR and MONTH; non-cancelled; binary delay_15; DEP_DELAY present",
+    "interpretation": "Retrospective outcome-derived cohort; not evidence of live eligibility"
+  },
+  "bundle_sha256": "9dca5d3bb2e8e2af0cf9bca3a2245584b83b10e2cfb0e883fb90388fd0b87b5a",
+  "scoring_builder": {
+    "sha256_recorded_when_scores_were_generated": "a77c70db0e033e85561186c7c947bd8957b024edfd7630e83e356ed175fe5b36",
+    "sha256_of_available_builder": "c107a5eb379da9830b7cb288082b1807422f5cfa43af7f9ba6283d3a1698a3cf",
+    "hashes_match": false,
+    "status": "Unresolved: exact recorded builder source not recovered; do not claim complete code-level reproduction."
+  },
+  "score_export_inputs": {
+    "T−2h": {
+      "filename": "preliminary_t_minus_2h_scores_by_source_ordinal.csv.gz",
+      "sha256": "3058e8bb078714ed24278e23c6cbfeb614a0c56b91483844585acb28512bf918",
+      "compressed_bytes": 312859043,
+      "source_rows": 6982766,
+      "full_year_scored_rows": 6982656,
+      "oct_dec_analysis_scored_rows": 1768379,
+      "decision_threshold": 0.4704047724395039
+    },
+    "T−30m": {
+      "filename": "preliminary_t_minus_30m_scores_by_source_ordinal.csv.gz",
+      "sha256": "cc73133c83821bcc4a4cac7a907002fdb4061d47152474148daaa32705293fef",
+      "compressed_bytes": 320453907,
+      "source_rows": 6982766,
+      "full_year_scored_rows": 6982222,
+      "oct_dec_analysis_scored_rows": 1768261,
+      "decision_threshold": 0.46314085073651107
+    }
+  },
+  "canonical_membership": {
+    "status": "not joined; mapping/cohort files not safely available in this workspace",
+    "reference_counts": {
+      "T−2h": 6982525,
+      "T−30m": 6982091
+    }
+  },
+  "row_level_score_exports_in_package": false,
+  "saved_aggregate_report": "colab_model_artifacts/aviation_airport_network_results.csv",
+  "availability_notes": "Schedule vintage, BTS publication/ingestion, recent operational event timestamps, and live departure/cancellation eligibility are unverified.",
+  "saved_aggregate_report_sha256": "be01e008e5ec5a4117383286f05a61673e644e118799906fa509e5a43fa0f21b",
+  "saved_aggregate_report_bytes": 1547
+}

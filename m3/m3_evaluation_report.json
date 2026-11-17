@@ -1,0 +1,433 @@
+{
+  "status": "PASS_RETROSPECTIVE_EXPLORATORY_M3",
+  "created_utc": "2026-11-04T08:37:40.340495+00:00",
+  "periods": {
+    "meta_training": "2024-09-01 through 2024-09-30",
+    "threshold_selection": "2024-10-01 through 2024-10-31",
+    "evaluation": "2024-11-01 through 2024-12-31"
+  },
+  "interpretation": "Retrospective exploratory stacking; Nov-Dec has already been inspected, not a blind final test.",
+  "m3_configuration": {
+    "features": [
+      "logit_flight_weather_probability",
+      "logit_airport_network_probability"
+    ],
+    "probability_clip_epsilon": 1e-06,
+    "logit": "ln(p / (1 - p)) after clipping p to [epsilon, 1-epsilon]",
+    "scaler": "sklearn.preprocessing.StandardScaler; fit on September rows only",
+    "estimator": "sklearn.linear_model.LogisticRegression",
+    "estimator_parameters": {
+      "penalty": "l2",
+      "C": 1.0,
+      "solver": "lbfgs",
+      "max_iter": 1000,
+      "class_weight": null
+    },
+    "positive_class": 1,
+    "seed": "Not applicable; deterministic full-batch LogisticRegression(lbfgs) with fixed inputs/configuration."
+  },
+  "horizons": {
+    "t_minus_2h": {
+      "input_validation": {
+        "status": "PASS",
+        "counts_by_month": {
+          "9": {
+            "flight_weather": 579111,
+            "airport_network": 579111,
+            "common_ids": 579111
+          },
+          "10": {
+            "flight_weather": 609185,
+            "airport_network": 609185,
+            "common_ids": 609185
+          },
+          "11": {
+            "flight_weather": 572749,
+            "airport_network": 572749,
+            "common_ids": 572749
+          },
+          "12": {
+            "flight_weather": 586406,
+            "airport_network": 586406,
+            "common_ids": 586406
+          }
+        },
+        "september_training_rows": 579111,
+        "october_threshold_selection_rows": 609185,
+        "november_december_evaluation_rows": 1159155,
+        "september_duplicate_ids_flight_weather": 0,
+        "september_duplicate_ids_airport_network": 0,
+        "duplicate_id_rows_flight_weather_sep_dec": 0,
+        "duplicate_id_rows_airport_network_sep_dec": 0,
+        "target_mismatches": 0,
+        "missing_probabilities_flight_weather": 0,
+        "missing_probabilities_airport_network": 0,
+        "unavailable_flight_weather": 0,
+        "unavailable_airport_network": 0,
+        "extra_ids_airport_network": 0,
+        "missing_ids_airport_network": 0,
+        "component_thresholds": {
+          "flight_weather": 0.2174423336982727,
+          "airport_network": 0.4704047724395039
+        },
+        "source_sha256": {
+          "flight_weather_scores": "4a44b8405b41380f46c310f129e819651a496c6e86cbda81d700494f7fcc4d93",
+          "airport_network_scores": "88746f367717663488b942cd213d2eb2f9ad6a65fea102bc166a6798db9e5618",
+          "airport_network_targets": "2be7628c324215aa6f3803641d83ae0f1f314dd0b3d0458d33cff434463f4468",
+          "airport_network_features": "d3dfd0d720096649497c57fb243589291134569753248c93c66d0456c31cd916"
+        },
+        "duplicate_id_rows_by_month_flight_weather": {
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0
+        },
+        "duplicate_id_rows_by_month_airport_network": {
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0
+        }
+      },
+      "training": {
+        "period": "2024-09-01 through 2024-09-30",
+        "n": 579111,
+        "positive_count": 87286,
+        "negative_count": 491825,
+        "class_order": [
+          0,
+          1
+        ],
+        "fit_months": [
+          9
+        ]
+      },
+      "threshold_selection": {
+        "period": "2024-10-01 through 2024-10-31",
+        "n": 609185,
+        "selected_threshold_max_f1": 0.17809467649913194,
+        "october_f1_at_selected_threshold": 0.3092469445791149
+      },
+      "evaluation": {
+        "period": "2024-11-01 through 2024-12-31",
+        "n": 1159155,
+        "exploratory_not_blind_final_test": true,
+        "comparison": {
+          "matched_common_scored_count": 1159155,
+          "flight_weather": {
+            "n": 1159155,
+            "average_precision": 0.3279482562591768,
+            "roc_auc": 0.6764511867365793,
+            "brier_score": 0.13918136986149532,
+            "log_loss": 0.4449765000383261,
+            "precision": 0.27389107433532284,
+            "recall": 0.6171361984402535,
+            "f1": 0.379400499999266,
+            "balanced_accuracy": 0.6282155477388083,
+            "threshold": 0.2174423336982727,
+            "confusion_matrix_tn_fp_fn_tp": [
+              607178,
+              342584,
+              80169,
+              129224
+            ]
+          },
+          "airport_network": {
+            "n": 1159155,
+            "average_precision": 0.32227906851095267,
+            "roc_auc": 0.6680139602260233,
+            "brier_score": 0.213314220491397,
+            "log_loss": 0.6171868910771372,
+            "precision": 0.26230215593043704,
+            "recall": 0.6154360460951417,
+            "f1": 0.3678322337013996,
+            "balanced_accuracy": 0.6169186438346733,
+            "threshold": 0.4704047724395039,
+            "confusion_matrix_tn_fp_fn_tp": [
+              587334,
+              362428,
+              80525,
+              128868
+            ]
+          },
+          "m3_logistic_stack": {
+            "n": 1159155,
+            "average_precision": 0.34473926502341645,
+            "roc_auc": 0.6843059947520885,
+            "brier_score": 0.13725587642212408,
+            "log_loss": 0.4391238226680851,
+            "precision": 0.2597177848775293,
+            "recall": 0.6894881872841977,
+            "f1": 0.3773097724887982,
+            "balanced_accuracy": 0.6281035036837724,
+            "threshold": 0.17809467649913194,
+            "confusion_matrix_tn_fp_fn_tp": [
+              538248,
+              411514,
+              65019,
+              144374
+            ]
+          },
+          "component_probability_mean_descriptive_only": {
+            "n": 1159155,
+            "average_precision": 0.3443842350232315,
+            "roc_auc": 0.6842593292319216,
+            "brier_score": 0.16022013830276102,
+            "log_loss": 0.5018002897295981,
+            "precision": 0.5132656604236024,
+            "recall": 0.12001356301309021,
+            "f1": 0.194539275567632,
+            "balanced_accuracy": 0.547461006880902,
+            "threshold": 0.5,
+            "confusion_matrix_tn_fp_fn_tp": [
+              925931,
+              23831,
+              184263,
+              25130
+            ]
+          },
+          "mean_benchmark_threshold_note": "Fixed 0.5 only for descriptive binary metrics; no tuning or model selection used this benchmark."
+        }
+      },
+      "m3_model_path": "m3_t_minus_2h_model.joblib",
+      "m3_model_sha256": "4594d58fd0a8c483a9bd5c72a811e72d64b42d01073398c26692e53b1bb2c77a",
+      "m3_score_export_path": "m3_t_minus_2h_scores.csv.gz",
+      "m3_score_export_rows": 1768340,
+      "m3_score_export_sha256": "1ba0110b9890aa53b2bdf740fe6f2339fa5fa89be708692a3aa7dde6549c02a8",
+      "saved_export_metric_reproducibility": "PASS: saved M3 score CSV reread; targets, probabilities, and AP reproduce within stated floating-point tolerance."
+    },
+    "t_minus_30m": {
+      "input_validation": {
+        "status": "PASS",
+        "counts_by_month": {
+          "9": {
+            "flight_weather": 579074,
+            "airport_network": 579074,
+            "common_ids": 579074
+          },
+          "10": {
+            "flight_weather": 609146,
+            "airport_network": 609146,
+            "common_ids": 609146
+          },
+          "11": {
+            "flight_weather": 572706,
+            "airport_network": 572706,
+            "common_ids": 572706
+          },
+          "12": {
+            "flight_weather": 586370,
+            "airport_network": 586370,
+            "common_ids": 586370
+          }
+        },
+        "september_training_rows": 579074,
+        "october_threshold_selection_rows": 609146,
+        "november_december_evaluation_rows": 1159076,
+        "september_duplicate_ids_flight_weather": 0,
+        "september_duplicate_ids_airport_network": 0,
+        "duplicate_id_rows_flight_weather_sep_dec": 0,
+        "duplicate_id_rows_airport_network_sep_dec": 0,
+        "target_mismatches": 0,
+        "missing_probabilities_flight_weather": 0,
+        "missing_probabilities_airport_network": 0,
+        "unavailable_flight_weather": 0,
+        "unavailable_airport_network": 0,
+        "extra_ids_airport_network": 0,
+        "missing_ids_airport_network": 0,
+        "component_thresholds": {
+          "flight_weather": 0.2182222455739975,
+          "airport_network": 0.46314085073651107
+        },
+        "source_sha256": {
+          "flight_weather_scores": "5f9950a3a3c98e8032755c3a043886838b6dd08d08033fbfe64a376bed047753",
+          "airport_network_scores": "da52c8e80b33fe29f9cc3c669c55e47624e021b8b73d53efe678e9cd506ff0ab",
+          "airport_network_targets": "c38fcbbd359a51703ab327a29f9acc1c3578a69c895701128614a9f9332519b9",
+          "airport_network_features": "77e5d5b0b3937936c028a30bd88e29e4027ee8721d87be897813cc129b5e4539"
+        },
+        "duplicate_id_rows_by_month_flight_weather": {
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0
+        },
+        "duplicate_id_rows_by_month_airport_network": {
+          "9": 0,
+          "10": 0,
+          "11": 0,
+          "12": 0
+        }
+      },
+      "training": {
+        "period": "2024-09-01 through 2024-09-30",
+        "n": 579074,
+        "positive_count": 87286,
+        "negative_count": 491788,
+        "class_order": [
+          0,
+          1
+        ],
+        "fit_months": [
+          9
+        ]
+      },
+      "threshold_selection": {
+        "period": "2024-10-01 through 2024-10-31",
+        "n": 609146,
+        "selected_threshold_max_f1": 0.17546958691226416,
+        "october_f1_at_selected_threshold": 0.31190082522076285
+      },
+      "evaluation": {
+        "period": "2024-11-01 through 2024-12-31",
+        "n": 1159076,
+        "exploratory_not_blind_final_test": true,
+        "comparison": {
+          "matched_common_scored_count": 1159076,
+          "flight_weather": {
+            "n": 1159076,
+            "average_precision": 0.3276139411984551,
+            "roc_auc": 0.6772575034318088,
+            "brier_score": 0.13903962377663642,
+            "log_loss": 0.44434752296806207,
+            "precision": 0.2759685825315063,
+            "recall": 0.6084348569436419,
+            "f1": 0.3797111081638097,
+            "balanced_accuracy": 0.6282366011852422,
+            "threshold": 0.2182222455739975,
+            "confusion_matrix_tn_fp_fn_tp": [
+              615431,
+              334252,
+              81991,
+              127402
+            ]
+          },
+          "airport_network": {
+            "n": 1159076,
+            "average_precision": 0.3427720897312745,
+            "roc_auc": 0.6790607798074766,
+            "brier_score": 0.20868983157893997,
+            "log_loss": 0.6080827805581085,
+            "precision": 0.27421637493869067,
+            "recall": 0.6060947596146958,
+            "f1": 0.37759628687463737,
+            "balanced_accuracy": 0.6261962621186034,
+            "threshold": 0.46314085073651107,
+            "confusion_matrix_tn_fp_fn_tp": [
+              613778,
+              335905,
+              82481,
+              126912
+            ]
+          },
+          "m3_logistic_stack": {
+            "n": 1159076,
+            "average_precision": 0.35707894838301285,
+            "roc_auc": 0.6915126255053115,
+            "brier_score": 0.13605994184649953,
+            "log_loss": 0.4358196158380109,
+            "precision": 0.26409470122369205,
+            "recall": 0.6917948546513016,
+            "f1": 0.3822603863057909,
+            "balanced_accuracy": 0.6333807243837217,
+            "threshold": 0.17546958691226416,
+            "confusion_matrix_tn_fp_fn_tp": [
+              546036,
+              403647,
+              64536,
+              144857
+            ]
+          },
+          "component_probability_mean_descriptive_only": {
+            "n": 1159076,
+            "average_precision": 0.3543176043599476,
+            "roc_auc": 0.6916318242978489,
+            "brier_score": 0.15833309267136128,
+            "log_loss": 0.4978466644111825,
+            "precision": 0.5360220538757082,
+            "recall": 0.1179313539612117,
+            "f1": 0.19332816622433083,
+            "balanced_accuracy": 0.5477119217801864,
+            "threshold": 0.5,
+            "confusion_matrix_tn_fp_fn_tp": [
+              928308,
+              21375,
+              184699,
+              24694
+            ]
+          },
+          "mean_benchmark_threshold_note": "Fixed 0.5 only for descriptive binary metrics; no tuning or model selection used this benchmark."
+        }
+      },
+      "m3_model_path": "m3_t_minus_30m_model.joblib",
+      "m3_model_sha256": "29cda9838316fa482afa288f44f8056598ae0ec55c43c8c2c6ad06e46f967a59",
+      "m3_score_export_path": "m3_t_minus_30m_scores.csv.gz",
+      "m3_score_export_rows": 1768222,
+      "m3_score_export_sha256": "e3b0905706c4370b62cad00891a6a8bab8e37176568a913f09ac49ad70ef2a45",
+      "saved_export_metric_reproducibility": "PASS: saved M3 score CSV reread; targets, probabilities, and AP reproduce within stated floating-point tolerance."
+    }
+  },
+  "limitations": [
+    "Airport/Network original scoring-time builder source has not been recovered; recorded/current builder hashes differ.",
+    "Airport/Network historical and recent activity features use retrospective BTS outcomes; schedule/history availability timestamps are unverified.",
+    "NOAA actual receipt timestamps are unavailable; Flight/Weather uses observation-time plus 15-minute availability proxy.",
+    "These results are retrospective research, not live operational evidence.",
+    "No untouched final-test period is established; the 2025 period was previously inspected.",
+    "Flight/Weather calibration and score-generation provenance is documented in its handoff manifest, but its scoring code/calibrator artifact was not independently available in this workspace."
+  ],
+  "base_models_retrained": false,
+  "base_predictions_regenerated": false,
+  "runtime_versions": {
+    "python": "3.12.14",
+    "numpy": "2.5.4",
+    "scikit_learn": "1.6.1",
+    "joblib": "1.6.0",
+    "scipy": "1.18.1"
+  },
+  "focused_validation": {
+    "synthetic_contract_tests": {
+      "passed": 8,
+      "failed": 0,
+      "scope": [
+        "canonical ID join",
+        "target parity",
+        "probability validation",
+        "horizon separation",
+        "disjoint train/threshold/evaluation dates",
+        "missing-probability rejection",
+        "duplicate-ID rejection"
+      ]
+    },
+    "both_horizons_full_source_join": "PASS: exact September–December canonical ID joins; score/target/feature horizons aligned; manifest source hashes matched; zero missing/extra IDs, duplicate IDs, unavailable scores, missing probabilities, or target mismatches.",
+    "fit_diagnostics": {
+      "t_minus_2h": {
+        "class_order": [
+          0,
+          1
+        ],
+        "lbfgs_iterations": [
+          5
+        ],
+        "input_feature_count": 2
+      },
+      "t_minus_30m": {
+        "class_order": [
+          0,
+          1
+        ],
+        "lbfgs_iterations": [
+          7
+        ],
+        "input_feature_count": 2
+      }
+    },
+    "fit_warning": "The runtime emitted sklearn/SciPy OptimizeWarning: Unknown solver options: iprint. Both lbfgs fits completed, saved artifacts loaded, classes were [0, 1], and no ConvergenceWarning was observed in the command output.",
+    "persisted_export_metrics": "PASS: independently recomputed all listed metrics (AP, ROC-AUC, Brier, log loss, precision, recall, F1, balanced accuracy) for Flight/Weather, Airport/Network, M3, and the fixed-0.5 mean benchmark from saved Nov-Dec rows; all matched the report within 1e-12.",
+    "m3_score_export_keys": "PASS: Nov-Dec M3 row counts equal unique ID counts for both horizons; zero duplicates; probabilities finite and within [0,1]; labels match saved thresholds.",
+    "output_hash_manifest": {
+      "entries": 10,
+      "mismatches": 0,
+      "run_manifest_sidecar_matches": true
+    }
+  },
+  "joint_review_status": "PENDING: Yash has not reviewed or approved this local M3 experiment."
+}

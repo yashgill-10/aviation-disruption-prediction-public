@@ -2,6 +2,8 @@
 
 > **Review draft.** These are retrospective 2024 prototype results, not production performance claims. The October–December 2024 test period has already been inspected. The draft is not yet approved or published as website content.
 
+> **Status update (2026-11-16):** Written before joint integration completed. Canonical-key Airport/Network score exports have since been produced and validated locally with full coverage of the retrospective eligible cohorts, the matched October–December component comparison and the November–December M3 stacking evaluation have been run, and the M3 implementation is published under `m3/`. Statements below about pending canonical coverage, blocked handoffs, or outstanding combined-model evaluation describe the state at the time of writing. Live inference for Airport/Network and M3 remains unvalidated; see `docs/PROJECT_COMPLETION_STATUS.md`.
+
 ## Retrospective model comparison
 
 The saved experiment compared schedule/route features with schedule/route plus Airport/Network context. Models used a 200,000-flight January–August training sample; September was used to select the threshold, which was then fixed for the October–December test period. The target is departure delay of at least 15 minutes among eligible non-cancelled flights.
