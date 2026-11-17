@@ -46,9 +46,9 @@ A 2024 BTS monthly-data join diagnostic found a unique tail-number match for 6,9
 - Aircraft rotations were assessed separately in the matched-sample pilot below; cross-airport propagation still needs live timestamped state to be validated.
 - There are no weather variables in this Airport/Network model; weather belongs to the separate Flight/Weather workstream.
 - Cancelled flights and flights already departed before a cutoff are excluded from the departure-delay prediction.
-- The 2024 results show an improvement from added airport/network context, but the PR-AUC values remain modest and should not be presented as a production guarantee.
+- In the archived 2024 ablation, the schedule/route-plus-context configuration had higher PR-AUC and F1 point estimates than schedule/route alone at both horizons. This is a descriptive comparison, not causal proof that the context features produced the differences; PR-AUC remains modest and the results are not a production guarantee.
 
-The repository does not include the cleaned flight data or serialized model bundle. The trained model and diagnostics remain in the Colab archive. The project-level final 2025 holdout evaluation remains outstanding; the 2024 Oct–Dec figures below are retrospective prototype results.
+The public repository does not include the cleaned flight data or serialized model bundle; these remain in the approved private artifact handoff. The 2024 October–December figures below are retrospective prototype results. The project also inspected 2025, so no untouched final test period is established.
 
 ## Reproduce in Colab
 
@@ -65,7 +65,7 @@ The Airport/Network-only pilot was run against all 12 monthly BTS archives in Co
 | T−30m | Schedule and route | 0.5031 | 19,986 | 0.3240 | 0.2332 | 0.6660 | 0.2141 | 0.5913 |
 | T−30m | Schedule, route, prior aircraft arrival | 0.5262 | 19,986 | 0.4958 | 0.4697 | 0.5487 | 0.4523 | 0.6219 |
 
-Prior-tail arrival features improved test F1 by 0.0272 at T−2h and 0.1718 at T−30m; PR-AUC increased by 0.0987 and 0.2365 respectively. Precision increased at both horizons, while recall decreased at both selected F1 thresholds. The sampled join found unique BTS tail numbers for 119,952 of 120,000 pilot rows; 47 sampled keys were ambiguous, and prior-aircraft-arrival feature coverage among cutoff-ready rows was 99.90%. The per-horizon test sizes differ slightly because flights already departed before a cutoff are ineligible.
+In the matched pilot rows, the aircraft-augmented configuration had F1 differences of +0.0272 at T−2h and +0.1718 at T−30m; PR-AUC differences were +0.0987 and +0.2365. Precision was higher at both horizons while recall was lower at the selected F1 thresholds. These are descriptive pilot results. The sampled join found unique BTS tail numbers for 119,952 of 120,000 pilot rows; 47 sampled keys were ambiguous, and prior-aircraft-arrival feature coverage among cutoff-ready rows was 99.90%. The per-horizon test sizes differ slightly because flights already departed before a cutoff are ineligible.
 
 The run saved `aviation_aircraft_rotation_pilot_results.csv` and `aviation_aircraft_rotation_pilot_sample_features.csv` in Colab. A combined ZIP, `aviation_airport_network_complete_artifacts.zip`, was created and passed the ZIP integrity check; it contains the earlier Airport/Network model package plus this pilot's script, results, sample features, and README.
 
