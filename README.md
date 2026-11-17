@@ -155,7 +155,7 @@ For full test-suite reproduction in the verified local environment:
 .\.venv\Scripts\python.exe -m unittest discover -s airport-network\tests -v
 ```
 
-The previously reported merged-main results were 89/89 root tests and 35/35 Airport/Network tests. These results should be understood as the recorded local test evidence, not as GitHub Actions status checks.
+On a clean checkout of this public snapshot (fresh environment, `requirements.txt` installed), the root suite collects 89 tests: 76 passed and 13 skipped — the skips are `requires_private_data`-guarded Flight/Weather web tests that need private, gitignored model/data artifacts absent from any clean clone. The Airport/Network suite passes 35/35 with no skips. These are locally executed unittest results, not GitHub Actions status checks; there is no CI configured.
 
 ### Flight/Weather local inference prototype
 

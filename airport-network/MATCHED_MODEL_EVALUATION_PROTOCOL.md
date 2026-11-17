@@ -2,6 +2,8 @@
 
 **Status:** proposed; not jointly approved or run. This prepares the comparison without claiming canonical membership or combined-model results.
 
+> **Status update (2026-11-16):** Written before joint integration completed. Canonical-key Airport/Network score exports have since been produced and validated locally with full coverage of the retrospective eligible cohorts, the matched October–December component comparison and the November–December M3 stacking evaluation have been run, and the M3 implementation is published under `m3/`. Statements below about pending canonical coverage, blocked handoffs, or outstanding combined-model evaluation describe the state at the time of writing. Live inference for Airport/Network and M3 remains unvalidated; see `docs/PROJECT_COMPLETION_STATUS.md`.
+
 ## Comparison population
 
 - Use the jointly approved canonical `flight_id` cohort separately for T−2h and T−30m.

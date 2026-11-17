@@ -2,6 +2,8 @@
 
 This is the authoritative handoff for the Airport/Network workstream. The repository PR branch is the source of truth for source code and documentation; the ZIP is a distribution package generated from that branch plus the Colab model/evaluation artifacts. It does not include the Flight/Weather implementation.
 
+> **Status update (2026-11-16):** Written before joint integration completed. Canonical-key Airport/Network score exports have since been produced and validated locally with full coverage of the retrospective eligible cohorts, the matched October–December component comparison and the November–December M3 stacking evaluation have been run, and the M3 implementation is published under `m3/`. Statements below about pending canonical coverage, blocked handoffs, or outstanding combined-model evaluation describe the state at the time of writing. Live inference for Airport/Network and M3 remains unvalidated; see `docs/PROJECT_COMPLETION_STATUS.md`.
+
 ## Model bundle compatibility
 
 The compressed pickle payload of `aviation_airport_network_model_bundle.joblib` contains scikit-learn's embedded `_sklearn_version` tag `1.6.1`. The PR requirements now pin `scikit-learn==1.6.1`; loading a model saved by another scikit-learn version is unsupported and can emit an `InconsistentVersionWarning`.

@@ -7,6 +7,8 @@ Updated: 2026-11-16 (public release). This is an evidence checkpoint, not a clai
 - Public source repository: https://github.com/yashgill-10/aviation-disruption-prediction-public — a sanitized single-commit snapshot of private `main` @ `40c188ede876f36beea0bc34c2e3378e95c3a0b6` (includes merged PR #11 AI-use disclosure). The original private repository `aviation-disruption-prediction` retains full development history and restricted local artifacts and is not required by reviewers.
 - Research website: https://yashgill-10.github.io/aviation-disruption-research-site/ (source: https://github.com/yashgill-10/aviation-disruption-research-site), kept in agreement with `web/research.html`.
 - Clean-checkout tests: root suite 76 passed / 13 skipped (private-data-dependent `requires_private_data` tests), Airport/Network suite 35 passed. No secrets detected by Gitleaks 8.30.1 on the public history.
+- M3 reproducibility: the actual retrospective `train_evaluate_m3.py` implementation was recovered from the private final-submission handoff archive and is published under `m3/` with only external input paths parameterized via environment variables; its synthetic contract tests pass (8 tests). Trained models and row-level score exports remain private; input score exports are required to rerun and are not distributed.
+- `airport-network/error_analysis/` aggregate-only tables and reproduction script are now included; `airport-network/README.md` and dated status notes reconcile earlier pending/outstanding statements with the completed canonical exports, matched comparison, and M3 evaluation.
 - This document records evidence status; it does not upgrade exploratory results into validated operational claims.
 
 ## Completed and verified locally
