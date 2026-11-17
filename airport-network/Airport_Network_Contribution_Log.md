@@ -1,32 +1,31 @@
-# Airport/Network contribution log
+# Airport/Network and M3 contribution record
 
-This log records the authorship of the Airport/Network deliverables in this handoff. It is a workstream-specific log, not a count of commits.
+This workstream record describes completed contributions and their evidence locations. It does not infer authorship from commit counts. Joint work is labelled joint, and private row-level artifacts are not included in this public repository.
 
-> **Status update (2026-11-16):** Written before joint integration completed. Canonical-key Airport/Network score exports have since been produced and validated locally with full coverage of the retrospective eligible cohorts, the matched October–December component comparison and the November–December M3 stacking evaluation have been run, and the M3 implementation is published under `m3/`. Statements below about pending canonical coverage, blocked handoffs, or outstanding combined-model evaluation describe the state at the time of writing. Live inference for Airport/Network and M3 remains unvalidated; see `docs/PROJECT_COMPLETION_STATUS.md`.
+## Airport/Network — Omruthik Nakkalapally
 
-| Deliverable | Author | Status / note |
-| --- | --- | --- |
-| Airport/Network feature builder, saved-model inference, integration helpers, schema, aircraft-rotation pilot, aggregate analysis, and initial handoff | Omruthik Nakkalapally | Existing workstream deliverables; source and limits are documented in this package. |
-| `airport_network_prediction_export.py` | Omruthik Nakkalapally | This follow-up; accepts canonical `flight_id` or validated 1-based `cleaned_input_row_ordinal` keys, preserves the selected key, and exports scored/unavailable rows. |
-| `tests/test_airport_network_prediction_export.py` | Omruthik Nakkalapally | This follow-up; tests canonical and ordinal key preservation/order, both horizons, thresholds, coverage, and explicit unavailable reasons. |
-| `Prediction_Export_Contract.md` and package README additions | Omruthik Nakkalapally | This follow-up; documents inputs, output fields, and retrospective availability limits. |
-| BTS-to-canonical identity reconciliation script and reports | Yash Gill | Reconciliation and crosswalk were generated separately; the restricted mapping has not been safely transferred into this workspace, so canonical-key score exports remain pending. |
-| Flight/Weather pipeline, evaluation protocol coordination, and website | Yash Gill | Flight/Weather workstream deliverables; contribution detail should be completed by the owner in the shared repository log. |
-| Common eligibility/quarantine policy, matched-flight evaluation, and combined-model interpretation | Omruthik Nakkalapally and Yash Gill | Joint review/approval and execution remain pending. |
-| Local retrospective ordinal eligibility lists, score exports, and export manifest | Omruthik Nakkalapally | Local-only reconstruction from the verified cleaned source; 1-based source ordinals retained, canonical identities not assigned, exact canonical membership remains pending the safe crosswalk. |
-| Oct–Dec Airport/Network error-analysis reproduction and website results/limitations review draft | Omruthik Nakkalapally | Local-only analysis/draft; descriptive, already-inspected 2024 period, not a blind final evaluation or published website section. |
-| T−30m sample correction, handoff/summary edits, and synchronized package manifest/ZIP/checksum | Omruthik Nakkalapally | Committed to PR #1; source-row ordinal 1 and 00:08 feature values reproduce the saved probability exactly. Ten existing Airport/Network unit tests passed. |
+- Developed the Airport/Network feature builder, separate T−2h and T−30m saved-model inference paths, canonical-ID integration adapter, and score-export contract. Relevant source: `airport_network_feature_builder.py`, `airport_network_inference.py`, `airport_network_integration.py`, and `airport_network_prediction_export.py`.
+- Added synthetic interface, feature-builder, export, handoff-verifier, and matched-evaluation tests under `tests/`. These validate contracts and guards; they do not reproduce the private model's full score generation.
+- Produced the retrospective Airport/Network error analysis, aggregate subgroup/calibration tables, and score-coverage/provenance documentation. Error-analysis tables remain keyed to `cleaned_input_row_ordinal`; they are separate from the canonical matched model comparison.
+- Reconciled Airport/Network scores to the Phase 2 canonical mapping and separate retrospective T−2h/T−30m memberships in the private workspace. `docs/PROJECT_COMPLETION_STATUS.md` records 6,982,525 T−2h and 6,982,091 T−30m canonical cohort IDs, full score coverage, and the October–December matched comparison counts. The row-level mapping and scores remain private.
+- Audited the airport-history, schedule-volume, recent-activity, and eligibility definitions. Their retrospective BTS values do not establish that the inputs were observable at either prediction cutoff.
+- Documented that the exact scoring-time builder recorded by the run manifest was not recovered. The public builder is a reference implementation, not a byte-identical substitute for that original.
 
-The team should append later work with the specific script, test, analysis, or report section and author(s). Do not infer authorship from commit count or list jointly reviewed results as jointly authored unless both contributors confirm that attribution.
-| Blank and null export-key rejection tests | Omruthik Nakkalapally | The exporter rejects blank or null keys in canonical, feature, and eligibility inputs; regression coverage exercises each keyed input. The complete local PR-package suite passes 12 tests, and the rebuilt archive manifest and ZIP integrity checks pass. |
-| Notebook and repository-relative documentation references | Omruthik Nakkalapally | Updated the experiment summary to the actual packaged notebook filename, corrected the Flight/Weather app path relative to `airport-network/`, and added the website draft to the README contents list. |
-| `Airport_Network_Feature_Availability_Audit.md` | Omruthik Nakkalapally | Packaged the feature-by-feature retrospective availability and eligibility audit, with the required operational timestamp evidence listed explicitly. |
-| `Airport_Network_Oct_Dec_Error_Analysis.md` and aggregate evidence tables | Omruthik Nakkalapally | Packaged retrospective ordinal-keyed metrics, calibration and subgroup summaries, Wilson intervals, and saved-report reconciliation. The report explicitly preserves the unresolved builder-hash, canonical-membership, and live-availability limits. No row-level score exports were added. |
-| Oct–Dec error-analysis reproduction script and package refresh | Omruthik Nakkalapally | The summarizer verified source hashes, reproduced aggregate metrics from local ordinal-keyed exports, regenerated 342 subgroup intervals, and passed the existing 12-test package suite; row-level scores remain excluded. |
-| Draft canonical-ID join, matched evaluator, protocol, and synthetic tests | Omruthik Nakkalapally | Added a strict ordinal-to-canonical join and three-model matched-evaluation toolkit for future approved artifacts. Ten synthetic tests pass. No project canonical mapping or Flight/Weather score files were used; no real matched metrics are claimed. |
-| `evaluation/`, matched-evaluation protocol, and synthetic contract tests | Omruthik Nakkalapally | Added a strict ordinal-to-canonical join and a three-model evaluator that preserves unavailable rows and rejects cohort/score mismatches. Ten synthetic tests pass; the project cohorts and real Flight/Weather exports remain unavailable, so no matched project result is claimed. |
-| `Airport_Network_Retrospective_Score_Coverage.md` | Omruthik Nakkalapally | Re-hashed six local source/score/cohort artifacts and documented full-year retrospective ordinal coverage, 110 explicit unavailable rows per horizon, and why canonical score coverage remains unknown until the verified mapping is joined. |
-| Aircraft-rotation pilot sampling and coverage clarification | Omruthik Nakkalapally | Corrected the script comment and report: samples differ across horizons; the 99.90% prior-arrival feature coverage is conditional on unique tail matches and valid UTC cutoffs, not the full pilot sample. Added machine-readable diagnostics for unmatched keys, cutoff validity, retained rows, and conditional coverage on rerun. Full Colab data were unavailable, so pilot metrics were not regenerated. |
-| Website results-and-limitations draft coverage update | Omruthik Nakkalapally | Added the explicit 110-per-horizon unavailable ordinal scores, unresolved canonical coverage, and conditional aircraft-pilot feature-coverage denominator to the review draft. Not published to the website. |
-| `tests/test_aircraft_rotation_diagnostics.py` | Omruthik Nakkalapally | Added a four-row synthetic check that confirms matched, ambiguous, unmatched, cutoff-valid, retained, and feature-coverage denominators are reported correctly. The full package suite passes 23 tests. |
-| `verify_handoff_package.py` and verifier tests | Omruthik Nakkalapally | Added a reusable manifest/ZIP/sidecar checker with synthetic tests for valid packages, tampering, extra files, path traversal, and checksum mismatch. |
+## M3 — source and evidence
+
+- Recovered the actual M3 logistic-stacking training/evaluation script from the private final-submission handoff and included a public copy at `../m3/train_evaluate_m3.py`. Its external input paths are parameterized; the public copy does not contain private data, score exports, or fitted models.
+- Added synthetic contract tests and documented the actual sequence: September 2024 meta-training, October threshold selection, and November–December exploratory evaluation, independently for T−2h and T−30m.
+- Preserved the manifest and evaluation report as generated evidence. The row-level September M3 training-ID list was not saved. The serialized M3 model files were written after evaluation predictions and metrics were calculated; no November–December refit is documented, but a pre-evaluation serialized model hash is not established.
+
+## Joint work — Omruthik Nakkalapally and Yash Gill
+
+- Established the common canonical flight identity and horizon-specific retrospective eligibility cohorts; reconciled the model score exports on matched canonical IDs; reviewed the October–December component comparison and November–December M3 exploratory comparison.
+- Prepared the joint research report and website evidence/limitations content. Metric values and limitations are summarized in `docs/PROJECT_COMPLETION_STATUS.md` and `reports/final_joint_exploratory_research_report.md`.
+- Kept the two horizons separate and retained explicit unavailable-score semantics in the export interfaces. No missing prediction is replaced by zero.
+
+## Reproducibility and attribution limits
+
+- The full data-dependent Airport/Network score run and M3 experiment require private inputs and/or model artifacts that are intentionally absent from this public repository. Only synthetic contract checks are reproducible from this checkout.
+- Complete model-family, feature-selection, and hyperparameter-selection histories were not recovered for all workstreams. The documented thresholds and chronology should not be misrepresented as a complete search history.
+- Airport/Network scoring-builder provenance and timestamped operational feature availability remain unresolved. None of these artifacts establishes live readiness.
+- This file records workstream contributions, not a commit-by-commit authorship ledger. Joint review does not change the primary ownership stated above.

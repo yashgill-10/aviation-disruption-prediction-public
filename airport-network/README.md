@@ -8,9 +8,9 @@ This folder contains Omruthik's Airport/Network workstream for the joint Aviatio
 - `Airport_Network_Website_Results_Limitations_Draft.md` — review-only website copy for the retrospective results and unresolved availability, provenance, and cohort limits.
 - `Airport_Network_Feature_Availability_Audit.md` — feature-by-feature evidence and unresolved schedule-vintage, BTS-publication, event-time, timezone, and live-eligibility gaps.
 - `Airport_Network_Oct_Dec_Error_Analysis.md` — retrospective Oct–Dec 2024 performance and error analysis, with subgroup and calibration caveats.
-- `Airport_Network_Retrospective_Score_Coverage.md` — verified local ordinal-export hashes, score coverage, and explicit unavailable reasons. Canonical-key score exports were subsequently produced and validated locally with 100% coverage of the retrospective eligible cohorts (see `docs/PROJECT_COMPLETION_STATUS.md`); the exports themselves remain private.
-- `error_analysis/` — aggregate-only supporting tables, holdout-report reconciliation, provenance summary, and local reproduction script; row-level score files are not included.
-- `evaluation/` and `MATCHED_MODEL_EVALUATION_PROTOCOL.md` — canonical-ID score join and matched three-model comparison tooling. The canonical join was subsequently executed on the approved private handoff files; matched October–December component comparison and the November–December M3 stacking evaluation are reported in `docs/PROJECT_COMPLETION_STATUS.md` and `m3/`.
+- `Airport_Network_Retrospective_Score_Coverage.md` — separate source-ordinal and canonical cohort coverage records. Canonical exports cover the retrospective eligible memberships at 100%; row-level files remain private.
+- `error_analysis/` — aggregate-only ordinal-keyed diagnostics and reproduction script; the separate canonical matched comparison is summarized in `docs/PROJECT_COMPLETION_STATUS.md`.
+- `evaluation/` and `MATCHED_MODEL_EVALUATION_PROTOCOL.md` — canonical-ID join/evaluation tooling and the historical protocol. The canonical join and matched component comparison were executed on approved private artifacts; the M3 evaluation is separately documented in `m3/`.
 - `Airport_Network_Integration_Handoff.md` — prediction contract, horizon-specific leakage rules, stable-ID join requirements, and combined-model handoff.
 - `Airport_Network_Feature_Schema.md` — feature definitions and cutoff availability rules.
 - `airport_network_inference.py` — horizon-aware inference helper and input/leakage/snapshot-cutoff guards.
@@ -18,15 +18,15 @@ This folder contains Omruthik's Airport/Network workstream for the joint Aviatio
 - `airport_network_prediction_export.py` — per-flight, per-horizon prediction exports keyed by canonical `flight_id` or, before identity mapping, verified 1-based `cleaned_input_row_ordinal`, with coverage and unavailable-score reasons.
 - `Prediction_Export_Contract.md` — input/output requirements and the unverified retrospective feature-availability caveat for prediction exports.
 - `verify_handoff_package.py` — verifies the extracted package manifest and, optionally, ZIP integrity and its adjacent checksum sidecar.
-- `Airport_Network_Contribution_Log.md` — authorship and pending joint-review items.
+- `Airport_Network_Contribution_Log.md` — completed workstream contribution record and reproducibility limits.
 - `aircraft_rotation_propagation_pilot.py` — Colab pilot for prior aircraft-arrival features.
 - `Aircraft_Rotation_Pilot_Results.md` — within-horizon matched pilot metrics, sample-scope caveats, and the conditional feature-coverage denominator.
 
 ## Reproducing the Colab experiments
 
-Use the cleaned 2024 BTS data in Colab. In the project notebook (retained in the private development archive, not this repository), run the Airport/Network cells in order: `2 → 4 → 5 → 8 → 27 → 28`. The aircraft-rotation pilot is a separate run. Follow the notebook's notes and skip the Flight/Weather-only cells when reproducing this workstream.
+The historical Colab workflow used cleaned 2024 BTS data and ran Airport/Network notebook cells `2 → 4 → 5 → 8 → 27 → 28`; the notebook and data are private and are not included. This is historical workflow guidance, not a byte-for-byte reproduction recipe: the exact scoring-time builder recorded by the run manifest was not recovered. The public `airport_network_feature_builder.py` is an available reference implementation, not the original scoring-time source. The aircraft-rotation pilot was separate.
 
-The repository excludes raw/processed CSVs, ZIPs, and serialized models through `.gitignore`. The cleaned data and trained model bundle remain in Colab. The source helper `airport_network_inference.py` needs that saved model bundle to perform inference.
+The repository excludes raw/processed CSVs, ZIPs, and serialized models through `.gitignore`. The cleaned data and trained model bundle remain in approved private storage. Real inference requires the saved bundle and feature rows; the synthetic contract checks need neither. Keep T−2h and T−30m as separate model/horizon runs.
 
 ## Results caveat
 
@@ -39,11 +39,12 @@ From the repository root, install the pinned Airport/Network dependencies, then 
 ```powershell
 python -m pip install -r airport-network/requirements.txt
 python -m unittest discover -s airport-network/tests -v
-python airport-network/airport_network_inference.py
-python airport-network/airport_network_integration.py
+python -B airport-network/airport_network_inference.py
+python -B airport-network/airport_network_integration.py
+python -B -m unittest discover -s m3 -p "test_m3_contract.py" -v
 ```
 
-All tests are `unittest`-discoverable (`python -m unittest discover -s airport-network/tests -v` from the repository root) and use deterministic mock estimators or synthetic canonical-format IDs, so they run without the private Colab dataset, serialized model, or row-level data. They cover horizon-specific inference, exact flight-ID coverage, row-order preservation, score validation, leakage checks, and the chronological split. The two script smoke checks cover additional input and cutoff guards. A real prediction still requires the saved model bundle and cutoff-ready Airport/Network feature rows in Colab.
+The Airport/Network suite and M3 contract suite use deterministic mocks/synthetic data and run without private data or fitted models. The Airport/Network checks cover horizon-specific inference interfaces, feature schema, export contracts, unavailable-score behavior, canonical-ID validation, row order, leakage guards, and synthetic fixtures. The two script smoke checks exercise import/input guards; they do not load the private estimator. Full Airport/Network score regeneration and the M3 training/evaluation script require private artifacts and are not run by these commands. Requirements pin pandas 2.2.3 and scikit-learn 1.6.1; NumPy and joblib are not pinned, so this is not a complete lockfile.
 
 The per-flight export tests can also be run with `python -m unittest discover -s airport-network/tests -p "test_airport_network_prediction_export.py" -v`. The exporter requires the joint canonical flight table and an explicit eligibility table for each horizon; it never synthesizes IDs or turns unavailable scores into zero.
 
