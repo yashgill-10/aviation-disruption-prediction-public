@@ -1,6 +1,13 @@
 # Project completion status
 
-Updated: 2026-11-14. This is an evidence checkpoint, not a claim that every planned phase is complete.
+Updated: 2026-11-16 (public release). This is an evidence checkpoint, not a claim that every planned phase is complete.
+
+## Public release status
+
+- Public source repository: https://github.com/yashgill-10/aviation-disruption-prediction-public — a sanitized single-commit snapshot of private `main` @ `40c188ede876f36beea0bc34c2e3378e95c3a0b6` (includes merged PR #11 AI-use disclosure). The original private repository `aviation-disruption-prediction` retains full development history and restricted local artifacts and is not required by reviewers.
+- Research website: https://yashgill-10.github.io/aviation-disruption-research-site/ (source: https://github.com/yashgill-10/aviation-disruption-research-site), kept in agreement with `web/research.html`.
+- Clean-checkout tests: root suite 76 passed / 13 skipped (private-data-dependent `requires_private_data` tests), Airport/Network suite 35 passed. No secrets detected by Gitleaks 8.30.1 on the public history.
+- This document records evidence status; it does not upgrade exploratory results into validated operational claims.
 
 ## Completed and verified locally
 

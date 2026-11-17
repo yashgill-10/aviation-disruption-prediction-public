@@ -8,9 +8,10 @@ A retrospective machine-learning study of U.S. flight departure delays, comparin
 
 - **Research website:** [Aviation Disruption Prediction — Research](https://yashgill-10.github.io/aviation-disruption-research-site/)
 - **Research website source:** [aviation-disruption-research-site](https://github.com/yashgill-10/aviation-disruption-research-site)
-- **Source repository:** [aviation-disruption-prediction](https://github.com/yashgill-10/aviation-disruption-prediction)
+- **Public source repository (this repository):** [aviation-disruption-prediction-public](https://github.com/yashgill-10/aviation-disruption-prediction-public) — the sanitized public release containing source code, tests, documentation, and aggregate results.
+- **Private development archive:** [aviation-disruption-prediction](https://github.com/yashgill-10/aviation-disruption-prediction) — the original private repository retaining full development history, branches, and restricted local artifacts. Reviewers do not need it.
 
-The research website is a separate static GitHub Pages presentation of stored retrospective results. It does not generate predictions. The source repository is currently private; access is controlled by the repository owner. The source repository also contains a separate local Flight/Weather dashboard prototype.
+The research website is a separate static GitHub Pages presentation of stored retrospective results. It does not generate predictions. This public repository also contains a separate local Flight/Weather dashboard prototype.
 
 ## Research question and target
 
