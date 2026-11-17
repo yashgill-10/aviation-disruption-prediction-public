@@ -1,6 +1,6 @@
 # Aviation Disruption Prediction — Joint Exploratory Research Report
 
-**Status: final exploratory report; unpublished local document.** This report consolidates existing Flight/Weather, Airport/Network, and M3 artifacts. It does not describe a live operational system, a causal feature effect, or a blind final test. The saved results are retrospective and exploratory.
+**Status: final exploratory report; published in the public source repository.** This report consolidates existing Flight/Weather, Airport/Network, and M3 artifacts. It does not describe a live operational system, a causal feature effect, or a blind final test. The saved results are retrospective and exploratory.
 
 ## Team and workstreams
 
@@ -153,4 +153,4 @@ January–June 2027 is a **provisional candidate only**, not an approved holdout
 - October–December matched comparison: `outputs/airport_network_canonical_integration/matched_evaluation_oct_dec_2024.json`.
 - Airport/Network model configuration and lineage: `outputs/airport_network_canonical_handoff/manifests/airport_network_model_manifest.json` and `outputs/01_data_exploration_clean_colab_export.ipynb` (notebook cells 18, 20, and 27).
 - Data-source references: BTS TranStats release information and airline on-time data ([TranStats release information](https://www.transtats.bts.gov/releaseinfo.asp)); NOAA/NCEI ASOS archive information ([NCEI ASOS](https://www.ncei.noaa.gov/news/whats-automated-surface-observing-system-asos)); Aviation Weather Center API documentation ([AWC API](https://www.connect.aviationweather.gov/data/api/)); and FAA SWIM access information, discussed only as a possible future operations source ([FAA SWIM access](https://www.faa.gov/air_traffic/technology/swim/products/get_connected)). Project-specific access, coverage, and data rights remain to be confirmed.
-- This is a final local report and remains unpublished. PR #1 remains open and in draft; no dashboard integration is included.
+- This report is published in the public source repository. All project PRs, including PR #1, have been merged. The static research evidence viewer is published on the project website; a combined live prediction dashboard is not implemented.

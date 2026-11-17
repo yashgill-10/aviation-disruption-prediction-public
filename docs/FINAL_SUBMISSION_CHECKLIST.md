@@ -1,6 +1,6 @@
 # ES 335 Final Submission Checklist
 
-Final release checkpoint: 2026-11-17. Public `main` @ `f2ac564d375d954d8d3cf642ed87abb27cc85426`.
+Final release checkpoint: 2026-11-17, established by merged PR #5 (`docs/final-submission-checklist`). Refer to the PR merge commit on `main` for the exact release SHA rather than a pinned value that changes with each subsequent merge.
 
 ## Submission artifacts
 
@@ -10,7 +10,7 @@ Final release checkpoint: 2026-11-17. Public `main` @ `f2ac564d375d954d8d3cf642e
 | Research website | https://yashgill-10.github.io/aviation-disruption-research-site/ | Deployed, synchronized with `web/research.html` |
 | Website source | https://github.com/yashgill-10/aviation-disruption-research-site | Published |
 | Private development archive | `aviation-disruption-prediction` (private) | Preserved; not required by reviewers |
-| Release manifest | `RELEASE_MANIFEST_SHA256.txt` | 123 entries, verified against canonical blobs |
+| Release manifest | `RELEASE_MANIFEST_SHA256.txt` | 124 entries verified against canonical blobs; 125 tracked files including the manifest itself |
 | AI-use disclosure | `CONTRIBUTIONS.md` + website section | Present |
 
 ## Verification evidence (fresh clean-clone run, 2026-11-17)

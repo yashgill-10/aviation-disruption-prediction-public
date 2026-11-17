@@ -1,6 +1,6 @@
 # Project completion status
 
-Updated: 2026-11-16 (public release). This is an evidence checkpoint, not a claim that every planned phase is complete.
+Updated: 2026-11-17 (final release). This is an evidence checkpoint, not a claim that every planned phase is complete.
 
 ## Public release status
 
@@ -76,4 +76,4 @@ Open `http://localhost:8000/research.html` for the static project site. See `SAF
 
 ## Checks in this worktree
 
-`git diff --check` passed on 2026-11-05. Focused Python tests and syntax compilation were attempted in a sandbox without a usable Python interpreter; earlier test outcomes in the retained readiness reports are historical evidence, not a fresh result for the changes made in this checkpoint.
+`git diff --check` passed on 2026-11-05. Focused Python tests and syntax compilation were attempted in a sandbox without a usable Python interpreter; earlier test outcomes in the retained readiness reports are historical evidence, not a fresh result for the changes made in this checkpoint. For the current verified test results, see the 2026-11-17 clean-clone run recorded in `docs/FINAL_SUBMISSION_CHECKLIST.md`; the November 5 worktree limitation above is historical and superseded.
